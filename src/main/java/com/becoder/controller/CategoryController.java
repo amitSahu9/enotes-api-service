@@ -1,5 +1,7 @@
 package com.becoder.controller;
 
+import com.becoder.dto.CategoryDto;
+import com.becoder.dto.CategoryResponse;
 import com.becoder.entity.Category;
 import com.becoder.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping("/save-category")
-    public ResponseEntity<?> saveCategory(@RequestBody Category category){
+    public ResponseEntity<?> saveCategory(@RequestBody CategoryDto category){
         Boolean b = categoryService.saveCategory(category);
         if(b){
             return new ResponseEntity<>("saved successfully", HttpStatus.CREATED);
@@ -28,7 +30,16 @@ public class CategoryController {
 
     @GetMapping("/category")
     public ResponseEntity<?> getAllCategory(){
-        List<Category> allCategories = categoryService.getAllCategories();
+        List<CategoryDto> allCategories = categoryService.getAllCategories();
+        if(CollectionUtils.isEmpty(allCategories)){
+            return ResponseEntity.noContent().build();
+        }
+        return new ResponseEntity<>(allCategories, HttpStatus.OK);
+    }
+
+    @GetMapping("/active-category")
+    public ResponseEntity<?> getActiveCategory(){
+        List<CategoryResponse> allCategories = categoryService.getActiveCategories();
         if(CollectionUtils.isEmpty(allCategories)){
             return ResponseEntity.noContent().build();
         }
