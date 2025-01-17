@@ -8,11 +8,13 @@ import com.becoder.service.CategoryService;
 import org.hibernate.type.descriptor.DateTimeUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,7 +47,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDto> getAllCategories() {
         List<Category> allCategories = categoryRepository.findAll();
-
         List<CategoryDto> collected = allCategories.stream().map(cat -> modelMapper.map(cat, CategoryDto.class)).collect(Collectors.toList());
         return collected;
     }
@@ -57,4 +58,23 @@ public class CategoryServiceImpl implements CategoryService {
         return collectedActives;
     }
 
+    @Override
+    public CategoryDto getCategoryById(Integer id) {
+        Optional<Category> byId = categoryRepository.findByIdAndIsDeletedFalse(id);
+        if(byId.isPresent()){
+            return modelMapper.map(byId.get(), CategoryDto.class);
+        }
+        return null;
+    }
+
+    public Boolean deleteCategoryById(Integer id){
+        Optional<Category> byId = categoryRepository.findById(id);
+        if(byId.isPresent()){
+            Category category = byId.get();
+            category.setIsDeleted(true);
+            categoryRepository.save(category);
+            return true;
+        }
+        return false;
+    }
 }
