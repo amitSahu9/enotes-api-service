@@ -3,7 +3,9 @@ package com.becoder.controller;
 import com.becoder.dto.CategoryDto;
 import com.becoder.dto.CategoryResponse;
 import com.becoder.entity.Category;
+import com.becoder.exception.ResourceNotFoundException;
 import com.becoder.service.CategoryService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/category")
 public class CategoryController {
@@ -21,7 +24,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping("/save-category")
-    public ResponseEntity<?> saveCategory(@RequestBody CategoryDto category){
+    public ResponseEntity<?> saveCategory(@RequestBody CategoryDto category) throws Exception{
         Boolean b = categoryService.saveCategory(category);
         if(b){
             return new ResponseEntity<>("saved successfully", HttpStatus.CREATED);
@@ -31,6 +34,8 @@ public class CategoryController {
 
     @GetMapping("/category")
     public ResponseEntity<?> getAllCategory(){
+        String nm = null;
+        nm.toUpperCase();
         List<CategoryDto> allCategories = categoryService.getAllCategories();
         if(CollectionUtils.isEmpty(allCategories)){
             return ResponseEntity.noContent().build();
@@ -48,7 +53,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCategoryById(@PathVariable Integer id){
+    public ResponseEntity<?> getCategoryById(@PathVariable Integer id) throws Exception{
         CategoryDto categoryById = categoryService.getCategoryById(id);
         if(ObjectUtils.isEmpty(categoryById)){
             return new ResponseEntity<>("Category not found with id - " + id, HttpStatus.NOT_FOUND);
