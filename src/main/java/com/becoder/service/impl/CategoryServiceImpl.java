@@ -3,6 +3,8 @@ package com.becoder.service.impl;
 import com.becoder.dto.CategoryDto;
 import com.becoder.dto.CategoryResponse;
 import com.becoder.entity.Category;
+import com.becoder.exception.ResourceAlreadyExistException;
+import com.becoder.exception.ResourceNotFoundException;
 import com.becoder.repository.CategoryRepository;
 import com.becoder.service.CategoryService;
 import org.hibernate.type.descriptor.DateTimeUtils;
@@ -27,7 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
     private ModelMapper modelMapper;
 
     @Override
-    public Boolean saveCategory(CategoryDto categoryDto) {
+    public Boolean saveCategory(CategoryDto categoryDto) throws Exception{
 //        Category category = new Category();
 //        category.setName(categoryDto.getName());
 //        category.setDescription(categoryDto.getDescription());
@@ -50,13 +52,16 @@ public class CategoryServiceImpl implements CategoryService {
         return true;
     }
 
-    private void updateCategory(Category category) {
+    private void updateCategory(Category category) throws Exception{
         Optional<Category> byId = categoryRepository.findById(category.getId());
         if(byId.isPresent()){
             Category existingCategory = byId.get();
+            if(category.getId() == existingCategory.getId()){
+                throw new ResourceAlreadyExistException("Category with id " + category.getId() + " already exists");
+            }
             category.setCreatedBy(existingCategory.getCreatedBy());
             category.setCreatedOn(existingCategory.getCreatedOn());
-            category.setIsDeleted(existingCategory.getIsDeleted());
+            category.setIsDeleted(existingCategory.getIsDeleted()); 
             category.setUpdatedBy(1);
             category.setUpdatedOn(new Date());
         }
@@ -77,10 +82,15 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto getCategoryById(Integer id) {
-        Optional<Category> byId = categoryRepository.findByIdAndIsDeletedFalse(id);
-        if(byId.isPresent()){
-            return modelMapper.map(byId.get(), CategoryDto.class);
+    public CategoryDto getCategoryById(Integer id) throws Exception {
+        Category category = categoryRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id = " + id));
+        if(!ObjectUtils.isEmpty(category)){
+//            if(category.getName() == null){
+//                throw new IllegalArgumentException("name is null");
+//            }
+//            category.getName().toUpperCase();
+            return modelMapper.map(category, CategoryDto.class);
         }
         return null;
     }
