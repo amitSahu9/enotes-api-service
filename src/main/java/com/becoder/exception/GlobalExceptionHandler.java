@@ -31,4 +31,10 @@ public class GlobalExceptionHandler {
         log.error("GlobalExceptionHandler :: handleResourceAlreadyExistsException :: " + e.getMessage());
         return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<?> handleValidationException(ValidationException e){
+        log.error("GlobalExceptionHandler :: handleValidationException :: " + e.getMessage());
+        return new ResponseEntity(e.getErrors(), HttpStatus.BAD_REQUEST);
+    }
 }
