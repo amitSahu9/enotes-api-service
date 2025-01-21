@@ -5,7 +5,6 @@ import com.becoder.exception.ValidationException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,8 +23,8 @@ public class Validation {
             if (ObjectUtils.isEmpty(categoryDto.getName())) {
                 errors.put("name", "name field is empty or null");
             } else {
-                if (categoryDto.getName().length() < 10) {
-                    errors.put("name", "name length minimum 10");
+                if (categoryDto.getName().length() < 3) {
+                    errors.put("name", "name length minimum 3");
                 }
                 if (categoryDto.getName().length() > 100) {
                     errors.put("name", "name length maximum 100");

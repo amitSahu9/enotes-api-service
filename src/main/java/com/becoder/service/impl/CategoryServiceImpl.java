@@ -40,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         if(ObjectUtils.isEmpty(categoryDto.getId())){
             category.setIsDeleted(false);
-            category.setCreatedBy(1);
+//            category.setCreatedBy(1);
             category.setCreatedOn(new Date());
         }
         else{
@@ -58,14 +58,14 @@ public class CategoryServiceImpl implements CategoryService {
         Optional<Category> byId = categoryRepository.findById(category.getId());
         if(byId.isPresent()){
             Category existingCategory = byId.get();
-            if(category.getId() == existingCategory.getId()){
-                throw new ResourceAlreadyExistException("Category with id " + category.getId() + " already exists");
-            }
+//            if(category.getId() == existingCategory.getId()){
+//                throw new ResourceAlreadyExistException("Category with id " + category.getId() + " already exists");
+//            }
             category.setCreatedBy(existingCategory.getCreatedBy());
             category.setCreatedOn(existingCategory.getCreatedOn());
             category.setIsDeleted(existingCategory.getIsDeleted());
-            category.setUpdatedBy(1);
-            category.setUpdatedOn(new Date());
+//            category.setUpdatedBy(1);
+//            category.setUpdatedOn(new Date());
         }
     }
 
