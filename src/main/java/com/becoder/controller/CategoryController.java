@@ -5,6 +5,7 @@ import com.becoder.dto.CategoryResponse;
 import com.becoder.entity.Category;
 import com.becoder.exception.ResourceNotFoundException;
 import com.becoder.service.CategoryService;
+import com.becoder.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,20 +28,23 @@ public class CategoryController {
     public ResponseEntity<?> saveCategory(@RequestBody CategoryDto category) throws Exception{
         Boolean b = categoryService.saveCategory(category);
         if(b){
-            return new ResponseEntity<>("saved successfully", HttpStatus.CREATED);
+            return CommonUtil.createErrorResponseMessage("saved success", HttpStatus.CREATED);
+//            return new ResponseEntity<>("saved successfully", HttpStatus.CREATED);
         }
-        return new ResponseEntity<>("not saved", HttpStatus.INTERNAL_SERVER_ERROR);
+        return CommonUtil.createBuildResponseMessage("not saved", HttpStatus.INTERNAL_SERVER_ERROR);
+//        return new ResponseEntity<>("not saved", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/category")
     public ResponseEntity<?> getAllCategory(){
-        String nm = null;
-        nm.toUpperCase();
+//        String nm = null;
+//        nm.toUpperCase();
         List<CategoryDto> allCategories = categoryService.getAllCategories();
         if(CollectionUtils.isEmpty(allCategories)){
             return ResponseEntity.noContent().build();
         }
-        return new ResponseEntity<>(allCategories, HttpStatus.OK);
+//        return new ResponseEntity<>(allCategories, HttpStatus.OK);
+        return CommonUtil.createBuildResponse(allCategories, HttpStatus.OK);
     }
 
     @GetMapping("/active-category")
